@@ -1,7 +1,6 @@
 from transformers import pipeline
 from langdetect import detect
 
-# Load summarizer once
 summarizer = pipeline("summarization", model="facebook/bart-large-cnn")
 
 def summarize_text(text: str) -> str:
