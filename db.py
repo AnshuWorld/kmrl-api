@@ -18,3 +18,13 @@ def save_document(doc_data: dict):
 def get_documents(limit: int = 10):
     collection = db["documents"]
     return list(collection.find().sort("_id", -1).limit(limit))
+def search_documents(query: str, category: str = None, limit: int = 10):
+    collection = db["documents"]
+    collection.create_index([("summary", "text"), ("full_text", "text")])
+    
+    filter_query = {"$text": {"$search": query}}
+    if category:
+        filter_query["category"] = category
+    
+    return list(collection.find(filter_query).limit(limit))
+
