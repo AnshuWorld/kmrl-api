@@ -6,3 +6,4 @@ transformers
 torch
 langdetect
 python-dotenv
+pymongo
