@@ -1,8 +1,10 @@
 from fastapi import FastAPI, UploadFile
 from typing import List
 import uvicorn
+
 from services.ocr import extract_text
 from services.nlp import summarize_text, detect_language
+from services.utils import clean_text, truncate_text
 
 app = FastAPI()
 
@@ -15,8 +17,9 @@ async def process_doc(files: List[UploadFile]):
 
         # OCR or text decode
         text = extract_text(file, content)
+        text = clean_text(text)
 
-        # Language detect
+        # Language detection
         lang = detect_language(text)
 
         # Summarization
@@ -26,10 +29,11 @@ async def process_doc(files: List[UploadFile]):
             "filename": file.filename,
             "language": lang,
             "summary": summary,
-            "excerpt": text[:200]
+            "excerpt": truncate_text(text, 200)
         })
 
     return {"processed_docs": results}
 
 if __name__ == "__main__":
     uvicorn.run(app, host="0.0.0.0", port=8000)
+
